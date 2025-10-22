@@ -1,157 +1,242 @@
-# Sistema de Gestión de Productos
+# TechSalle - Sistema de Gestión de Productos
 
-Sistema web completo para la gestión de inventario, productos y categorías desarrollado como actividad académica.
+Sistema completo de gestión de productos tecnológicos desarrollado con Node.js, MySQL y React.js.
 
-## Características principales
+## Características
 
-- **Gestión completa de productos** (CRUD)
-- **Sistema de categorías inteligente**
-- **Filtros de búsqueda avanzados**
-- **Dashboard con estadísticas**
-- **Interfaz moderna y responsive**
-- **Accesibilidad básica (WCAG 2.1)**
-- **Prototipado documentado**
-- **Adaptabilidad multi-dispositivo**
+### Frontend (React.js)
+- **Home**: Listado de productos con filtros por categoría y búsqueda por nombre
+- **Formulario de Producto**: Crear y editar productos con validación completa
+- **Gestión de Categorías**: CRUD completo para categorías
+- **Diseño Responsivo**: Adaptable a diferentes dispositivos
+- **Estados de Carga**: Indicadores de carga, error y estados vacíos
+- **Validación**: Inputs validados con mensajes de error claros
+- **Imágenes**: Soporte para URLs de imágenes de productos
 
-## Tecnologías utilizadas
+### Backend (Node.js + Express)
+- **API RESTful**: Endpoints completos para productos y categorías
+- **Base de Datos MySQL**: Gestión eficiente de datos
+- **Validación**: Validación de datos en servidor
+- **CORS**: Configurado para desarrollo frontend
 
-- **Frontend**: React.js + Material-UI
-- **Backend**: Node.js + Express.js
-- **Base de Datos**: MySQL
-- **Lenguaje**: JavaScript
+## Tecnologías
 
-## Instalación
+### Frontend
+- React 18
+- Material-UI (MUI)
+- Axios
+- CSS3
 
-### Requisitos
-- Node.js 18+
-- MySQL 8.0+
+### Backend
+- Node.js
+- Express.js
+- MySQL2
+- CORS
+- Dotenv
 
-### Pasos
-1. **Clonar repositorio**
-   ```bash
-   git clone https://github.com/GabrielSanchez73/ACTIVIDAD-1.-Analicemos-y-dise-emos-un-software-para-a-gesti-n-gerencial-de-organizaciones.git
-   cd ACTIVIDAD-1.-Analicemos-y-dise-emos-un-software-para-a-gesti-n-gerencial-de-organizaciones
-   ```
+## Estructura del Proyecto
 
-2. **Instalar dependencias del servidor**
-   ```bash
-   cd server
-   npm install
-   ```
+```
+crud-nodejs-mysql-reactjs/
+├── client/                 # Frontend React
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── CategoryManager.jsx
+│   │   ├── App.js
+│   │   ├── config.js
+│   │   └── index.js
+│   ├── package.json
+│   └── public/
+├── server/                 # Backend Node.js
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── routes/
+│   │   └── models/
+│   ├── package.json
+│   └── database.sql
+├── iniciar.bat            # Script de inicio
+└── README.md
+```
 
-3. **Instalar dependencias del cliente**
-   ```bash
-   cd ../client
-   npm install
-   ```
+## Instalación y Uso
 
-4. **Configurar base de datos**
-   - Crear base de datos MySQL: `sistema_productos`
-   - Ejecutar script: `database.sql`
+### Requisitos Previos
+- Node.js (v14 o superior)
+- MySQL (v8 o superior)
+- Git
 
-5. **Iniciar sistema**
-   ```bash
-   # Terminal 1 - Servidor
-   cd server && npm start
-   
-   # Terminal 2 - Cliente
-   cd client && npm start
-   ```
+### Instalación Rápida
 
-## Acceso
+1. **Clonar el repositorio**:
+```bash
+git clone https://github.com/GabrielSanchez73/Act-6-Desarrollemos-el-backend-y-conexi-n-a-la-base-de-datos.git
+cd crud-nodejs-mysql-reactjs
+```
 
-- **Frontend**: http://localhost:4000
-- **Backend**: http://localhost:5000
+2. **Ejecutar el sistema**:
+```bash
+# En Windows
+iniciar.bat
+
+# O manualmente:
+cd server && npm install && npm start
+cd client && npm install && npm start
+```
+
+3. **Acceder a la aplicación**:
+- Frontend: http://localhost:4000
+- Backend: http://localhost:5000
+
+### Instalación Manual
+
+#### Backend
+```bash
+cd server
+npm install
+# Configurar base de datos en database.sql
+npm start
+```
+
+#### Frontend
+```bash
+cd client
+npm install
+npm start
+```
+
+## Base de Datos
+
+### Configuración MySQL
+1. Crear base de datos:
+```sql
+CREATE DATABASE techsalle;
+```
+
+2. Ejecutar el script `server/database.sql`
+
+### Estructura de Tablas
+- **productos**: id, nombre, descripcion, precio, categoria, stock, proveedor, imagenUrl
+- **categorias**: id, nombre, descripcion
 
 ## Funcionalidades
 
 ### Gestión de Productos
-- Agregar, editar, eliminar productos
-- Campos: nombre, descripción, precio, categoría, stock, proveedor
-- Validaciones de formulario
-- **Accesibilidad**: aria-labels, navegación por teclado
+- Listar productos con filtros
+- Crear productos nuevos
+- Editar productos existentes
+- Eliminar productos
+- Búsqueda por nombre
+- Filtros por categoría y precio
+- Soporte para imágenes
 
-### Sistema de Categorías
-- Selector desplegable de categorías existentes
-- Creación de nuevas categorías en tiempo real
-- Sincronización automática
-- **UX mejorada**: Indicadores visuales y validación
+### Gestión de Categorías
+- Listar categorías
+- Crear categorías nuevas
+- Editar categorías existentes
+- Eliminar categorías
+- Validación de campos
 
-### Filtros de Búsqueda
-- Filtro por nombre
-- Filtro por categoría
-- Filtros de precio (mínimo y máximo)
-- Filtros combinados
-- **Indicadores visuales**: Chips de filtros activos
+### Características Adicionales
+- Diseño profesional con Material-UI
+- Estados de carga y error
+- Validación de formularios
+- Notificaciones de éxito/error
+- Responsive design
+- Estadísticas en tiempo real
 
-### Panel de estadísticas
-- Contador de productos totales
-- Stock disponible
-- Precio promedio
-- Número de categorías
-- **Diseño responsive**: Se adapta a todos los dispositivos
+## API Endpoints
 
-### Prototipado y Diseño
-- **Wireframes**: Diseño de baja fidelidad
-- **Mockups**: Diseño de alta fidelidad
-- **User flows**: Flujos de usuario documentados
-- **Decisiones de diseño**: Justificación de elecciones técnicas
+### Productos
+- `GET /productos` - Listar productos
+- `GET /productos/:id` - Obtener producto
+- `POST /productos` - Crear producto
+- `PUT /productos/:id` - Actualizar producto
+- `DELETE /productos/:id` - Eliminar producto
 
-## Estructura del proyecto
+### Categorías
+- `GET /categorias` - Listar categorías
+- `GET /categorias/:id` - Obtener categoría
+- `POST /categorias` - Crear categoría
+- `PUT /categorias/:id` - Actualizar categoría
+- `DELETE /categorias/:id` - Eliminar categoría
 
+### Estadísticas
+- `GET /estadisticas` - Obtener estadísticas del sistema
+
+## Diseño
+
+- **Colores**: Paleta profesional con azules y grises
+- **Tipografía**: Material-UI typography
+- **Layout**: Grid responsivo
+- **Interacciones**: Hover effects y transiciones suaves
+- **Estados**: Loading spinners, mensajes claros
+
+## Responsive Design
+
+- **Desktop**: Layout completo con sidebar
+- **Tablet**: Grid adaptativo
+- **Mobile**: Una columna, navegación optimizada
+
+## Scripts Disponibles
+
+### Frontend
+- `npm start` - Ejecutar en modo desarrollo (puerto 4000)
+- `npm run build` - Construir para producción
+- `npm test` - Ejecutar pruebas
+
+### Backend
+- `npm start` - Ejecutar servidor (puerto 5000)
+- `npm run dev` - Ejecutar con nodemon
+
+## Variables de Entorno
+
+### Backend (.env)
 ```
-├── client/                 # Frontend React
-│   ├── src/
-│   │   ├── App.js         # Componente principal
-│   │   ├── config.js      # Configuración
-│   │   └── ProductTable.js
-│   └── package.json
-├── server/                 # Backend Node.js
-│   ├── index.js           # Servidor Express
-│   ├── db.js              # Conexión MySQL
-│   └── database.sql       # Script de base de datos
-├── docs/                   # Documentación adicional
-│   ├── wireframes/        # Wireframes de baja fidelidad
-│   ├── mockups/           # Mockups de alta fidelidad
-│   ├── flujos/            # User flows
-│   └── ADAPTABILIDAD_MULTIDISPOSITIVO.md
-├── README.md
-├── README_PROTOTIPO.md     # Documentación de prototipado
-├── GUIA_VIDEO_YOUTUBE.md  # Guía para video de demostración
-└── iniciar-sistema.bat    # Script de inicio para Windows
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=tu_password
+DB_NAME=techsalle
+PORT=5000
 ```
 
-## Pruebas
-
-```bash
-# Pruebas generales del sistema
-node test-system.js
-
-# Pruebas específicas de filtros
-node test-filtros-precio.js
+### Frontend
+```
+VITE_API_BASE_URL=http://localhost:5000
 ```
 
-## Documentación adicional
+## Características Técnicas
 
-- `README_MEJORAS.md` - Detalles de implementación
-- `SISTEMA_FILTROS.md` - Guía de filtros
-- `README_PROTOTIPO.md` - **NUEVO** - Documentación de prototipado y diseño
-- `docs/ADAPTABILIDAD_MULTIDISPOSITIVO.md` - **NUEVO** - Evidencias responsive
-- `GUIA_VIDEO_YOUTUBE.md` - **NUEVO** - Guía para video de demostración
-- `iniciar-sistema.bat` - Script de inicio automático
+- **Normalización**: Base de datos normalizada
+- **Validación**: Validación en frontend y backend
+- **Error Handling**: Manejo de errores completo
+- **Performance**: Consultas optimizadas
+- **Security**: Validación de datos y CORS
 
 ## Autor
 
-**Gabriel Sánchez** - Estudiante de Ingeniería de Software
-
-## Fecha
-
-31/08/2025
+**Gabriel Sánchez**
+- GitHub: [@GabrielSanchez73](https://github.com/GabrielSanchez73)
 
 ## Licencia
 
-Proyecto académico - Universidad
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## Contribuciones
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## Soporte
+
+Si tienes preguntas o necesitas ayuda, puedes:
+- Abrir un issue en GitHub
+- Contactar al autor
 
 ---
 
-Desarrollado para el aprendizaje y desarrollo profesional
+**TechSalle** - Sistema de Gestión de Productos Tecnológicos
