@@ -191,6 +191,16 @@ function App() {
       return;
     }
 
+    if (precio <= 0) {
+      mostrarNotificacion('El precio debe ser mayor a 0', 'error');
+      return;
+    }
+
+    if (stock < 0) {
+      mostrarNotificacion('El stock no puede ser negativo', 'error');
+      return;
+    }
+
     // Determinar la categoría final
     let categoriaFinal = categoria;
     if (categoria === '__nueva__') {
@@ -217,10 +227,13 @@ function App() {
 
         if (response.ok) {
           const nuevosProductos = [...productos];
-          nuevosProductos[editIndex] = { ...producto, nombre, descripcion, precio, categoria, stock, proveedor };
+          nuevosProductos[editIndex] = { ...producto, nombre, descripcion, precio, categoria: categoriaFinal, stock, proveedor, imagenUrl };
           setProductos(nuevosProductos);
           setEditIndex(null);
           mostrarNotificacion('Producto actualizado correctamente');
+          toggleDialog();
+          cargarEstadisticas();
+          cargarCategorias();
         } else {
           const errorData = await response.json();
           mostrarNotificacion(errorData.error || 'Error al actualizar el producto', 'error');
@@ -237,14 +250,13 @@ function App() {
         if (response.ok) {
           setProductos([...productos, data]);
           mostrarNotificacion('Producto guardado correctamente');
+          toggleDialog();
+          cargarEstadisticas();
+          cargarCategorias();
         } else {
           mostrarNotificacion(data.error || 'Error al guardar el producto', 'error');
         }
       }
-
-      toggleDialog();
-      cargarEstadisticas();
-      cargarCategorias(); // Recargar categorías para incluir las nuevas
     } catch (error) {
       mostrarNotificacion('Error de conexión', 'error');
     } finally {
