@@ -4,7 +4,6 @@ const Filters = ({ categories, onFilterChange, onSearchChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  // Debounce para la búsqueda
   useEffect(() => {
     const timer = setTimeout(() => {
       onSearchChange(searchTerm);

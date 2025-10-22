@@ -9,9 +9,7 @@ const api = axios.create({
   },
 });
 
-// Servicios para categorías
 export const categoriesAPI = {
-  // Obtener todas las categorías
   getAll: async () => {
     try {
       const response = await api.get('/categories');
@@ -22,7 +20,6 @@ export const categoriesAPI = {
     }
   },
 
-  // Obtener una categoría por ID
   getById: async (id) => {
     try {
       const response = await api.get(`/categories/${id}`);
@@ -33,7 +30,6 @@ export const categoriesAPI = {
     }
   },
 
-  // Crear una nueva categoría
   create: async (categoryData) => {
     try {
       const response = await api.post('/categories', categoryData);
@@ -44,7 +40,6 @@ export const categoriesAPI = {
     }
   },
 
-  // Actualizar una categoría
   update: async (id, categoryData) => {
     try {
       const response = await api.put(`/categories/${id}`, categoryData);
@@ -55,7 +50,6 @@ export const categoriesAPI = {
     }
   },
 
-  // Eliminar una categoría
   delete: async (id) => {
     try {
       const response = await api.delete(`/categories/${id}`);

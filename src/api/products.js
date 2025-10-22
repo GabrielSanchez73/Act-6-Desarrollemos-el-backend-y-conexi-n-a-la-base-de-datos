@@ -9,9 +9,7 @@ const api = axios.create({
   },
 });
 
-// Servicios para productos
 export const productsAPI = {
-  // Obtener todos los productos
   getAll: async () => {
     try {
       const response = await api.get('/products');
@@ -22,7 +20,6 @@ export const productsAPI = {
     }
   },
 
-  // Obtener un producto por ID
   getById: async (id) => {
     try {
       const response = await api.get(`/products/${id}`);
@@ -33,7 +30,6 @@ export const productsAPI = {
     }
   },
 
-  // Crear un nuevo producto
   create: async (productData) => {
     try {
       const response = await api.post('/products', productData);
@@ -44,7 +40,6 @@ export const productsAPI = {
     }
   },
 
-  // Actualizar un producto
   update: async (id, productData) => {
     try {
       const response = await api.put(`/products/${id}`, productData);
@@ -55,7 +50,6 @@ export const productsAPI = {
     }
   },
 
-  // Eliminar un producto
   delete: async (id) => {
     try {
       const response = await api.delete(`/products/${id}`);
@@ -66,7 +60,6 @@ export const productsAPI = {
     }
   },
 
-  // Buscar productos por nombre
   search: async (searchTerm) => {
     try {
       const response = await api.get(`/products/search?q=${encodeURIComponent(searchTerm)}`);
@@ -77,7 +70,6 @@ export const productsAPI = {
     }
   },
 
-  // Obtener productos por categoría
   getByCategory: async (categoryId) => {
     try {
       const response = await api.get(`/products/category/${categoryId}`);

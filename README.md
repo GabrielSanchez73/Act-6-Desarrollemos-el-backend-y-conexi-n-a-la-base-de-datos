@@ -4,14 +4,13 @@ Frontend de React.js para el sistema de gestión de productos tecnológicos Tech
 
 ## Características
 
-- Home con listado de productos y filtros por categoría y búsqueda por nombre
-- Formulario de producto para crear y editar con validación completa
-- Detalle de producto con información completa
-- Eliminar producto desde la lista o el detalle
-- Gestión de categorías para crear, editar y eliminar
-- Diseño responsivo adaptable a diferentes dispositivos
-- Estados de carga, error y vacíos claros
-- Validación de inputs con mensajes de error claros
+- **Home**: Listado de productos con filtros por categoría y búsqueda por nombre
+- **Formulario de Producto**: Crear y editar productos con validación completa
+- **Detalle de Producto**: Vista completa de información del producto
+- **Gestión de Categorías**: CRUD completo para categorías
+- **Diseño Responsivo**: Adaptable a diferentes dispositivos
+- **Estados de Carga**: Indicadores de carga, error y estados vacíos
+- **Validación**: Inputs validados con mensajes de error claros
 
 ## Tecnologías
 
@@ -19,7 +18,7 @@ Frontend de React.js para el sistema de gestión de productos tecnológicos Tech
 - React Router DOM
 - Axios
 - Vite
-- CSS3
+- CSS3 (sin frameworks adicionales)
 
 ## Estructura del Proyecto
 
@@ -45,33 +44,33 @@ src/
 
 ## Instalación
 
-1. Clonar el repositorio:
+1. **Clonar el repositorio**:
    ```bash
    git clone <repository-url>
    cd techsalle-frontend
    ```
 
-2. Instalar dependencias:
+2. **Instalar dependencias**:
    ```bash
    npm install
    ```
 
-3. Configurar variables de entorno:
+3. **Configurar variables de entorno**:
    ```bash
    cp env.example .env
    ```
    
-   Editar .env y configurar:
+   Editar `.env` y configurar:
    ```
    VITE_API_BASE_URL=http://localhost:3000/api
    ```
 
-4. Ejecutar en modo desarrollo:
+4. **Ejecutar en modo desarrollo**:
    ```bash
    npm run dev
    ```
 
-5. Abrir en el navegador:
+5. **Abrir en el navegador**:
    ```
    http://localhost:5173
    ```
@@ -94,8 +93,8 @@ src/
 ### Formulario de Producto
 - Campos: nombre, precio, stock, categoría, imagen URL, descripción
 - Validación en tiempo real
-- Precio debe ser mayor a 0
-- Stock debe ser mayor o igual a 0
+- Precio debe ser > 0
+- Stock debe ser ≥ 0
 - Nombre y categoría obligatorios
 - Modo crear y editar
 
@@ -131,18 +130,18 @@ El frontend espera que el backend tenga los siguientes endpoints:
 
 ## Diseño
 
-- Colores: Paleta profesional con azules y grises
-- Tipografía: Segoe UI para mejor legibilidad
-- Layout: Grid responsivo para productos
-- Interacciones: Hover effects y transiciones suaves
-- Estados: Loading spinners, mensajes de error claros
+- **Colores**: Paleta profesional con azules y grises
+- **Tipografía**: Segoe UI para mejor legibilidad
+- **Layout**: Grid responsivo para productos
+- **Interacciones**: Hover effects y transiciones suaves
+- **Estados**: Loading spinners, mensajes de error claros
 
 ## Responsive Design
 
-- Desktop: Grid de 3-4 columnas para productos
-- Tablet: Grid de 2 columnas
-- Mobile: Una columna, navegación apilada
-- Breakpoint: 768px para cambios principales
+- **Desktop**: Grid de 3-4 columnas para productos
+- **Tablet**: Grid de 2 columnas
+- **Mobile**: Una columna, navegación apilada
+- **Breakpoint**: 768px para cambios principales
 
 ## Autor
 
