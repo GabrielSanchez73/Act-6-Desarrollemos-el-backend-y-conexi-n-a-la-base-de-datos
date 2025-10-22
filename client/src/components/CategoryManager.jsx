@@ -38,7 +38,6 @@ import { getApiUrl } from '../config';
 function CategoryManager({ open, onClose, onCategoryChange }) {
   const [categorias, setCategorias] = useState([]);
   const [nombre, setNombre] = useState('');
-  const [editIndex, setEditIndex] = useState(null);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -68,7 +67,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const limpiarFormulario = () => {
     setNombre('');
-    setEditIndex(null);
   };
 
   const abrirFormulario = () => {
@@ -85,41 +83,20 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
     setLoading(true);
     try {
-      if (editIndex !== null) {
-        // Actualizar categoría existente
-        const categoria = categorias[editIndex];
-        const response = await fetch(`${getApiUrl('CATEGORIAS')}/${categoria.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre.trim() })
-        });
+      // Crear nueva categoría
+      const response = await fetch(getApiUrl('CATEGORIAS'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombre.trim() })
+      });
 
-        if (response.ok) {
-          const nuevasCategorias = [...categorias];
-          nuevasCategorias[editIndex] = { ...categoria, nombre: nombre.trim() };
-          setCategorias(nuevasCategorias);
-          setEditIndex(null);
-          mostrarNotificacion('Categoría actualizada correctamente');
-        } else {
-          const errorData = await response.json();
-          mostrarNotificacion(errorData.error || 'Error al actualizar la categoría', 'error');
-        }
+      const data = await response.json();
+      if (response.ok) {
+        setCategorias([...categorias, data]);
+        mostrarNotificacion('Categoría creada correctamente');
+        onCategoryChange && onCategoryChange();
       } else {
-        // Crear nueva categoría
-        const response = await fetch(getApiUrl('CATEGORIAS'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre.trim() })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setCategorias([...categorias, data]);
-          mostrarNotificacion('Categoría creada correctamente');
-          onCategoryChange && onCategoryChange();
-        } else {
-          mostrarNotificacion(data.error || 'Error al crear la categoría', 'error');
-        }
+        mostrarNotificacion(data.error || 'Error al crear la categoría', 'error');
       }
 
       limpiarFormulario();
@@ -141,10 +118,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
         if (response.ok) {
           setCategorias(categorias.filter((_, i) => i !== idx));
-          if (editIndex === idx) {
-            setEditIndex(null);
-            limpiarFormulario();
-          }
           mostrarNotificacion('Categoría eliminada correctamente');
           onCategoryChange && onCategoryChange();
         } else {
@@ -158,11 +131,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
     }
   };
 
-  const editarCategoria = (idx) => {
-    const categoria = categorias[idx];
-    setNombre(categoria.nombre);
-    setEditIndex(idx);
-  };
 
   return (
     <Dialog 
@@ -196,7 +164,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
             <CardContent>
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CategoryIcon color="primary" />
-                {editIndex !== null ? 'Editar Categoría' : 'Nueva Categoría'}
+                Nueva Categoría
               </Typography>
               <form onSubmit={guardarCategoria}>
                 <Grid container spacing={2}>
@@ -229,18 +197,8 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                           }
                         }}
                       >
-                        {editIndex !== null ? 'Actualizar' : 'Crear'}
+                        Crear
                       </Button>
-                      {editIndex !== null && (
-                        <Button
-                          variant="outlined"
-                          onClick={limpiarFormulario}
-                          startIcon={<CancelIcon />}
-                          sx={{ borderRadius: 2 }}
-                        >
-                          Cancelar
-                        </Button>
-                      )}
                     </Box>
                   </Grid>
                 </Grid>
@@ -282,23 +240,12 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                   categorias.map((categoria, idx) => (
                     <TableRow key={idx} hover>
                       <TableCell>
-                        <Chip
-                          label={categoria.nombre}
-                          color="primary"
-                          sx={{ fontWeight: 600 }}
-                        />
+                        <Typography variant="body1" sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                          {categoria.nombre}
+                        </Typography>
                       </TableCell>
                       <TableCell>
                         <Box sx={{ display: 'flex', gap: 0.5 }}>
-                          <Tooltip title="Editar categoría">
-                            <IconButton
-                              color="primary"
-                              onClick={() => editarCategoria(idx)}
-                              size="small"
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </Tooltip>
                           <Tooltip title="Eliminar categoría">
                             <IconButton
                               color="error"
