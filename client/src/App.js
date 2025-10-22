@@ -1120,11 +1120,11 @@ function App() {
                       },
                     }}
                   />
-                  {imagenUrl && imagenUrl.trim() !== '' && (
-                    <Box sx={{ mt: 2, textAlign: 'center' }}>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Vista previa:
-                      </Typography>
+                  <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Vista previa:
+                    </Typography>
+                    {imagenUrl && imagenUrl.trim() !== '' ? (
                       <Box
                         component="img"
                         src={imagenUrl}
@@ -1139,10 +1139,29 @@ function App() {
                         }}
                         onError={(e) => {
                           e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
+                    ) : null}
+                    <Box
+                      sx={{
+                        width: 150,
+                        height: 150,
+                        backgroundColor: '#f5f5f5',
+                        borderRadius: 2,
+                        display: imagenUrl && imagenUrl.trim() !== '' ? 'none' : 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid #e0e0e0',
+                        flexDirection: 'column',
+                        gap: 1
+                      }}
+                    >
+                      <Typography variant="caption" color="text.secondary">
+                        Sin imagen
+                      </Typography>
                     </Box>
-                  )}
+                  </Box>
                 </Grid>
               </Grid>
             </DialogContent>
