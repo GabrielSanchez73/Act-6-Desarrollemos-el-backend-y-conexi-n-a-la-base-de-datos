@@ -201,6 +201,16 @@ function App() {
       return;
     }
 
+    // Validar URL de imagen si se proporciona
+    if (imagenUrl && imagenUrl.trim() !== '') {
+      try {
+        new URL(imagenUrl);
+      } catch (error) {
+        mostrarNotificacion('La URL de la imagen no es válida', 'error');
+        return;
+      }
+    }
+
     // Determinar la categoría final
     let categoriaFinal = categoria;
     if (categoria === '__nueva__') {
@@ -844,14 +854,24 @@ function App() {
                           src={producto.imagenUrl}
                           alt={producto.nombre}
                           sx={{
-                            width: 50,
-                            height: 50,
+                            width: 60,
+                            height: 60,
                             objectFit: 'cover',
                             borderRadius: 1,
-                            border: '1px solid #e0e0e0'
+                            border: '1px solid #e0e0e0',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s ease-in-out',
+                            '&:hover': {
+                              transform: 'scale(1.1)',
+                              zIndex: 1,
+                              position: 'relative'
+                            }
                           }}
                           onError={(e) => {
                             e.target.style.display = 'none';
+                          }}
+                          onClick={() => {
+                            window.open(producto.imagenUrl, '_blank');
                           }}
                         />
                       ) : (
@@ -1100,6 +1120,29 @@ function App() {
                       },
                     }}
                   />
+                  {imagenUrl && imagenUrl.trim() !== '' && (
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        Vista previa:
+                      </Typography>
+                      <Box
+                        component="img"
+                        src={imagenUrl}
+                        alt="Vista previa"
+                        sx={{
+                          maxWidth: 150,
+                          maxHeight: 150,
+                          objectFit: 'cover',
+                          borderRadius: 2,
+                          border: '1px solid #e0e0e0',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </Box>
+                  )}
                 </Grid>
               </Grid>
             </DialogContent>
