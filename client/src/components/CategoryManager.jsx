@@ -51,6 +51,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
     try {
       const response = await fetch(getApiUrl('CATEGORIAS'));
       const data = await response.json();
+      console.log('Categorías cargadas:', data);
       setCategorias(data);
     } catch (error) {
       mostrarNotificacion('Error al cargar categorías', 'error');
@@ -241,7 +242,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                     <TableRow key={idx} hover>
                       <TableCell>
                         <Typography variant="body1" sx={{ fontWeight: 600, color: '#2c3e50' }}>
-                          {categoria.nombre}
+                          {categoria.nombre || categoria.name || categoria.categoria || 'Sin nombre'}
                         </Typography>
                       </TableCell>
                       <TableCell>
