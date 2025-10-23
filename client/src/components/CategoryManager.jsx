@@ -33,12 +33,11 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon
 } from '@mui/icons-material';
-import { getApiUrl } from '../config';
+import { categoriesAPI } from '../../../src/api/categories';
 
 function CategoryManager({ open, onClose, onCategoryChange }) {
   const [categorias, setCategorias] = useState([]);
   const [nombre, setNombre] = useState('');
-  const [descripcion, setDescripcion] = useState('');
   const [editandoId, setEditandoId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -51,8 +50,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const cargarCategorias = async () => {
     try {
-      const response = await fetch(getApiUrl('CATEGORIAS'));
-      const data = await response.json();
+      const data = await categoriesAPI.getAll();
       console.log('Categorías cargadas:', data);
       setCategorias(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -71,7 +69,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const limpiarFormulario = () => {
     setNombre('');
-    setDescripcion('');
     setEditandoId(null);
   };
 
@@ -89,52 +86,35 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
     setLoading(true);
     try {
-      let response;
+      let data;
       if (editandoId) {
         // Actualizar categoría existente
-        response = await fetch(`${getApiUrl('CATEGORIAS')}/${editandoId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() })
-        });
+        data = await categoriesAPI.update(editandoId, { name: nombre.trim() });
+        // Actualizar categoría en la lista
+        setCategorias(categorias.map(cat =>
+          cat.id === editandoId
+            ? { ...cat, name: nombre.trim() }
+            : cat
+        ));
+        mostrarNotificacion('Categoría actualizada correctamente');
       } else {
         // Crear nueva categoría
-        response = await fetch(getApiUrl('CATEGORIAS'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() })
-        });
+        data = await categoriesAPI.create({ name: nombre.trim() });
+        setCategorias([...categorias, data]);
+        mostrarNotificacion('Categoría creada correctamente');
       }
-
-      const data = await response.json();
-      if (response.ok) {
-        if (editandoId) {
-          // Actualizar categoría en la lista
-          setCategorias(categorias.map(cat => 
-            cat.id === editandoId 
-              ? { ...cat, nombre: nombre.trim(), descripcion: descripcion.trim() }
-              : cat
-          ));
-          mostrarNotificacion('Categoría actualizada correctamente');
-        } else {
-          setCategorias([...categorias, data]);
-          mostrarNotificacion('Categoría creada correctamente');
-        }
-        onCategoryChange && onCategoryChange();
-        limpiarFormulario();
-      } else {
-        mostrarNotificacion(data.error || 'Error al guardar la categoría', 'error');
-      }
+      onCategoryChange && onCategoryChange();
+      limpiarFormulario();
     } catch (error) {
-      mostrarNotificacion('Error de conexión', 'error');
+      const errorMessage = error.response?.data?.error || 'Error al guardar la categoría';
+      mostrarNotificacion(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
   };
 
   const editarCategoria = (categoria) => {
-    setNombre(categoria.nombre);
-    setDescripcion(categoria.descripcion || '');
+    setNombre(categoria.name || categoria.nombre);
     setEditandoId(categoria.id);
   };
 
@@ -144,23 +124,16 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const eliminarCategoria = async (idx) => {
     const categoria = categorias[idx];
-    if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria.nombre}"?`)) {
+    if (window.confirm(`¿Estás seguro de que quieres eliminar la categoría "${categoria.name || categoria.nombre}"?`)) {
       setLoading(true);
       try {
-        const response = await fetch(`${getApiUrl('CATEGORIAS')}/${categoria.id}`, {
-          method: 'DELETE'
-        });
-
-        if (response.ok) {
-          setCategorias(categorias.filter((_, i) => i !== idx));
-          mostrarNotificacion('Categoría eliminada correctamente');
-          onCategoryChange && onCategoryChange();
-        } else {
-          const data = await response.json();
-          mostrarNotificacion(data.error || 'Error al eliminar la categoría', 'error');
-        }
+        await categoriesAPI.delete(categoria.id);
+        setCategorias(categorias.filter((_, i) => i !== idx));
+        mostrarNotificacion('Categoría eliminada correctamente');
+        onCategoryChange && onCategoryChange();
       } catch (error) {
-        mostrarNotificacion('Error de conexión al eliminar', 'error');
+        const errorMessage = error.response?.data?.error || 'Error al eliminar la categoría';
+        mostrarNotificacion(errorMessage, 'error');
       } finally {
         setLoading(false);
       }
@@ -218,19 +191,6 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      label="Descripción (opcional)"
-                      value={descripcion}
-                      onChange={(e) => setDescripcion(e.target.value)}
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                        },
-                      }}
-                    />
-                  </Grid>
                   <Grid item xs={12}>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Button
@@ -278,14 +238,13 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 }}>
                   <TableCell sx={{ color: 'white', fontWeight: 600 }}>Nombre</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Descripción</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 600 }}>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {!Array.isArray(categorias) || categorias.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} align="center" sx={{ py: 4 }}>
+                    <TableCell colSpan={2} align="center" sx={{ py: 4 }}>
                       <Box sx={{ textAlign: 'center' }}>
                         <CategoryIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
                         <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -299,15 +258,10 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                   </TableRow>
                 ) : (
                   Array.isArray(categorias) && categorias.map((categoria, idx) => (
-                    <TableRow key={idx} hover>
+                    <TableRow key={categoria.id || idx} hover>
                       <TableCell>
                         <Typography variant="body1" sx={{ fontWeight: 600, color: '#2c3e50' }}>
-                          {categoria.nombre || categoria.name || categoria.categoria || 'Sin nombre'}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" color="text.secondary">
-                          {categoria.descripcion || 'Sin descripción'}
+                          {categoria.name || categoria.nombre || 'Sin nombre'}
                         </Typography>
                       </TableCell>
                       <TableCell>

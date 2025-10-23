@@ -122,8 +122,11 @@ function App() {
       }
       
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
       const data = await response.json();
-      setProductos(data);
+      setProductos(Array.isArray(data) ? data : []);
     } catch (error) {
       mostrarNotificacion('Error al cargar los productos', 'error');
     }
@@ -133,6 +136,9 @@ function App() {
   const cargarCategorias = async () => {
     try {
       const response = await fetch(getApiUrl('CATEGORIAS'));
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
       const data = await response.json();
       console.log('Categorías cargadas:', data);
       setCategorias(Array.isArray(data) ? data : []);

@@ -15,7 +15,8 @@ const ProductForm = () => {
     category_id: '',
     image_url: '',
     description: '',
-    supplier: ''
+    supplier: '',
+    newCategory: ''
   });
 
   const [categories, setCategories] = useState([]);
@@ -77,6 +78,8 @@ const ProductForm = () => {
 
     if (!formData.category_id) {
       errors.category_id = 'Debe seleccionar una categoría';
+    } else if (formData.category_id === 'new' && !formData.newCategory?.trim()) {
+      errors.category_id = 'Debe ingresar el nombre de la nueva categoría';
     }
 
     setValidationErrors(errors);
@@ -110,11 +113,27 @@ const ProductForm = () => {
       setLoading(true);
       setError(null);
 
+      let categoryId = formData.category_id;
+
+      // Si se seleccionó "Agregar nueva categoría", crearla primero
+      if (formData.category_id === 'new' && formData.newCategory.trim()) {
+        try {
+          const newCategory = await categoriesAPI.create({ name: formData.newCategory.trim() });
+          categoryId = newCategory.id;
+          // Recargar categorías para incluir la nueva
+          loadCategories();
+        } catch (categoryError) {
+          setError('Error al crear la nueva categoría');
+          console.error('Error creando categoría:', categoryError);
+          return;
+        }
+      }
+
       const productData = {
         ...formData,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
-        categoria_id: parseInt(formData.category_id)
+        categoria_id: parseInt(categoryId)
       };
 
       if (isEdit) {
@@ -223,9 +242,21 @@ const ProductForm = () => {
                 {category.name}
               </option>
             ))}
+            <option value="new">Agregar nueva categoría</option>
           </select>
           {validationErrors.category_id && (
             <span className="error-text">{validationErrors.category_id}</span>
+          )}
+          {formData.category_id === 'new' && (
+            <div style={{ marginTop: '10px' }}>
+              <input
+                type="text"
+                placeholder="Nueva categoría"
+                value={formData.newCategory || ''}
+                onChange={(e) => setFormData(prev => ({ ...prev, newCategory: e.target.value }))}
+                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+              />
+            </div>
           )}
         </div>
 
