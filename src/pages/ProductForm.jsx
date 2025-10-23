@@ -14,7 +14,8 @@ const ProductForm = () => {
     stock: '',
     category_id: '',
     image_url: '',
-    description: ''
+    description: '',
+    supplier: ''
   });
 
   const [categories, setCategories] = useState([]);
@@ -48,7 +49,8 @@ const ProductForm = () => {
         stock: product.stock || '',
         category_id: product.category_id || '',
         image_url: product.image_url || '',
-        description: product.description || ''
+        description: product.description || '',
+        supplier: product.supplier || ''
       });
     } catch (error) {
       setError('Error al cargar el producto');
@@ -112,7 +114,7 @@ const ProductForm = () => {
         ...formData,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
-        category_id: parseInt(formData.category_id)
+        categoria_id: parseInt(formData.category_id)
       };
 
       if (isEdit) {
@@ -236,6 +238,18 @@ const ProductForm = () => {
             value={formData.image_url}
             onChange={handleChange}
             placeholder="https://ejemplo.com/imagen.jpg"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="supplier">Proveedor</label>
+          <input
+            type="text"
+            id="supplier"
+            name="supplier"
+            value={formData.supplier}
+            onChange={handleChange}
+            placeholder="Nombre del proveedor"
           />
         </div>
 

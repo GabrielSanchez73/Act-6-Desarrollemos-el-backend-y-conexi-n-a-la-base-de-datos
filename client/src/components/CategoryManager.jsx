@@ -38,6 +38,8 @@ import { getApiUrl } from '../config';
 function CategoryManager({ open, onClose, onCategoryChange }) {
   const [categorias, setCategorias] = useState([]);
   const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [editandoId, setEditandoId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -52,9 +54,10 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
       const response = await fetch(getApiUrl('CATEGORIAS'));
       const data = await response.json();
       console.log('Categorías cargadas:', data);
-      setCategorias(data);
+      setCategorias(Array.isArray(data) ? data : []);
     } catch (error) {
-      mostrarNotificacion('Error al cargar categorías', 'error');
+      console.error('Error al cargar categorías:', error);
+      setCategorias([]);
     }
   };
 
@@ -68,6 +71,8 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
   const limpiarFormulario = () => {
     setNombre('');
+    setDescripcion('');
+    setEditandoId(null);
   };
 
   const abrirFormulario = () => {
@@ -84,28 +89,57 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
     setLoading(true);
     try {
-      // Crear nueva categoría
-      const response = await fetch(getApiUrl('CATEGORIAS'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre: nombre.trim() })
-      });
+      let response;
+      if (editandoId) {
+        // Actualizar categoría existente
+        response = await fetch(`${getApiUrl('CATEGORIAS')}/${editandoId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() })
+        });
+      } else {
+        // Crear nueva categoría
+        response = await fetch(getApiUrl('CATEGORIAS'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre: nombre.trim(), descripcion: descripcion.trim() })
+        });
+      }
 
       const data = await response.json();
       if (response.ok) {
-        setCategorias([...categorias, data]);
-        mostrarNotificacion('Categoría creada correctamente');
+        if (editandoId) {
+          // Actualizar categoría en la lista
+          setCategorias(categorias.map(cat => 
+            cat.id === editandoId 
+              ? { ...cat, nombre: nombre.trim(), descripcion: descripcion.trim() }
+              : cat
+          ));
+          mostrarNotificacion('Categoría actualizada correctamente');
+        } else {
+          setCategorias([...categorias, data]);
+          mostrarNotificacion('Categoría creada correctamente');
+        }
         onCategoryChange && onCategoryChange();
+        limpiarFormulario();
       } else {
-        mostrarNotificacion(data.error || 'Error al crear la categoría', 'error');
+        mostrarNotificacion(data.error || 'Error al guardar la categoría', 'error');
       }
-
-      limpiarFormulario();
     } catch (error) {
       mostrarNotificacion('Error de conexión', 'error');
     } finally {
       setLoading(false);
     }
+  };
+
+  const editarCategoria = (categoria) => {
+    setNombre(categoria.nombre);
+    setDescripcion(categoria.descripcion || '');
+    setEditandoId(categoria.id);
+  };
+
+  const cancelarEdicion = () => {
+    limpiarFormulario();
   };
 
   const eliminarCategoria = async (idx) => {
@@ -122,7 +156,8 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
           mostrarNotificacion('Categoría eliminada correctamente');
           onCategoryChange && onCategoryChange();
         } else {
-          mostrarNotificacion('Error al eliminar la categoría', 'error');
+          const data = await response.json();
+          mostrarNotificacion(data.error || 'Error al eliminar la categoría', 'error');
         }
       } catch (error) {
         mostrarNotificacion('Error de conexión al eliminar', 'error');
@@ -165,17 +200,30 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
             <CardContent>
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <CategoryIcon color="primary" />
-                Nueva Categoría
+                {editandoId ? 'Editar Categoría' : 'Nueva Categoría'}
               </Typography>
               <form onSubmit={guardarCategoria}>
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
+                  <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
                       label="Nombre de la categoría"
                       value={nombre}
                       onChange={(e) => setNombre(e.target.value)}
                       required
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Descripción (opcional)"
+                      value={descripcion}
+                      onChange={(e) => setDescripcion(e.target.value)}
                       sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
@@ -198,8 +246,19 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                           }
                         }}
                       >
-                        Crear
+                        {editandoId ? 'Actualizar' : 'Crear'}
                       </Button>
+                      {editandoId && (
+                        <Button
+                          variant="outlined"
+                          startIcon={<CancelIcon />}
+                          onClick={cancelarEdicion}
+                          disabled={loading}
+                          sx={{ borderRadius: 2 }}
+                        >
+                          Cancelar
+                        </Button>
+                      )}
                     </Box>
                   </Grid>
                 </Grid>
@@ -209,7 +268,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
 
           {/* Lista de categorías */}
           <Typography variant="h6" gutterBottom>
-            Categorías Existentes ({categorias.length})
+            Categorías Existentes ({Array.isArray(categorias) ? categorias.length : 0})
           </Typography>
           
           <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
@@ -219,13 +278,14 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 }}>
                   <TableCell sx={{ color: 'white', fontWeight: 600 }}>Nombre</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 600 }}>Descripción</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 600 }}>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {categorias.length === 0 ? (
+                {!Array.isArray(categorias) || categorias.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={2} align="center" sx={{ py: 4 }}>
+                    <TableCell colSpan={3} align="center" sx={{ py: 4 }}>
                       <Box sx={{ textAlign: 'center' }}>
                         <CategoryIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
                         <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -238,7 +298,7 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  categorias.map((categoria, idx) => (
+                  Array.isArray(categorias) && categorias.map((categoria, idx) => (
                     <TableRow key={idx} hover>
                       <TableCell>
                         <Typography variant="body1" sx={{ fontWeight: 600, color: '#2c3e50' }}>
@@ -246,7 +306,21 @@ function CategoryManager({ open, onClose, onCategoryChange }) {
                         </Typography>
                       </TableCell>
                       <TableCell>
+                        <Typography variant="body2" color="text.secondary">
+                          {categoria.descripcion || 'Sin descripción'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
                         <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <Tooltip title="Editar categoría">
+                            <IconButton
+                              color="primary"
+                              onClick={() => editarCategoria(categoria)}
+                              size="small"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
                           <Tooltip title="Eliminar categoría">
                             <IconButton
                               color="error"

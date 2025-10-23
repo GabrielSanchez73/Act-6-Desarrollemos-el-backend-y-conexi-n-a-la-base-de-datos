@@ -8,7 +8,7 @@ const Categories = () => {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: '', description: '' });
+  const [formData, setFormData] = useState({ name: '' });
   const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
@@ -68,21 +68,24 @@ const Categories = () => {
         await categoriesAPI.create(formData);
       }
 
-      setFormData({ name: '', description: '' });
+      setFormData({ name: '' });
       setEditingCategory(null);
       setShowForm(false);
       loadCategories();
     } catch (error) {
-      setError('Error al guardar la categoría');
-      console.error('Error:', error);
+      console.error('Error completo:', error);
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(`Error: ${error.response.data.error}`);
+      } else {
+        setError('Error al guardar la categoría');
+      }
     }
   };
 
   const handleEdit = (category) => {
     setEditingCategory(category);
     setFormData({
-      name: category.name,
-      description: category.description || ''
+      name: category.name
     });
     setShowForm(true);
   };
@@ -92,15 +95,19 @@ const Categories = () => {
       try {
         await categoriesAPI.delete(categoryId);
         loadCategories();
-      } catch (error) {
+    } catch (error) {
+      console.error('Error completo:', error);
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(`Error: ${error.response.data.error}`);
+      } else {
         setError('Error al eliminar la categoría');
-        console.error('Error:', error);
       }
+    }
     }
   };
 
   const cancelForm = () => {
-    setFormData({ name: '', description: '' });
+    setFormData({ name: '' });
     setEditingCategory(null);
     setShowForm(false);
     setValidationErrors({});
@@ -157,9 +164,6 @@ const Categories = () => {
               {categories.map(category => (
                 <div key={category.id} className="category-card">
                   <h3>{category.name}</h3>
-                  {category.description && (
-                    <p className="category-description">{category.description}</p>
-                  )}
                   <div className="category-actions">
                     <button
                       onClick={() => handleEdit(category)}
@@ -201,17 +205,6 @@ const Categories = () => {
                 )}
               </div>
 
-              <div className="form-group">
-                <label htmlFor="description">Descripción</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="Descripción de la categoría..."
-                  rows="3"
-                />
-              </div>
 
               <div className="form-actions">
                 <button type="submit" className="btn btn-primary">

@@ -93,7 +93,7 @@ const ProductDetail = () => {
               </div>
               <div className="info-item">
                 <label>Categoría:</label>
-                <span>{product.category_name || 'Sin categoría'}</span>
+                <span>{product.category || 'Sin categoría'}</span>
               </div>
               <div className="info-item">
                 <label>Precio:</label>

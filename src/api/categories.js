@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,7 +12,7 @@ const api = axios.create({
 export const categoriesAPI = {
   getAll: async () => {
     try {
-      const response = await api.get('/categories');
+      const response = await api.get('/categorias');
       return response.data;
     } catch (error) {
       console.error('Error al obtener categorías:', error);
@@ -22,7 +22,7 @@ export const categoriesAPI = {
 
   getById: async (id) => {
     try {
-      const response = await api.get(`/categories/${id}`);
+      const response = await api.get(`/categorias/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error al obtener categoría:', error);
@@ -32,7 +32,7 @@ export const categoriesAPI = {
 
   create: async (categoryData) => {
     try {
-      const response = await api.post('/categories', categoryData);
+      const response = await api.post('/categorias', categoryData);
       return response.data;
     } catch (error) {
       console.error('Error al crear categoría:', error);
@@ -42,7 +42,7 @@ export const categoriesAPI = {
 
   update: async (id, categoryData) => {
     try {
-      const response = await api.put(`/categories/${id}`, categoryData);
+      const response = await api.put(`/categorias/${id}`, categoryData);
       return response.data;
     } catch (error) {
       console.error('Error al actualizar categoría:', error);
@@ -52,7 +52,7 @@ export const categoriesAPI = {
 
   delete: async (id) => {
     try {
-      const response = await api.delete(`/categories/${id}`);
+      const response = await api.delete(`/categorias/${id}`);
       return response.data;
     } catch (error) {
       console.error('Error al eliminar categoría:', error);

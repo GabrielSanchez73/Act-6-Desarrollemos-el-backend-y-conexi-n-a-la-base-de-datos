@@ -24,7 +24,7 @@ const ProductCard = ({ product, onDelete }) => {
       
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>
-        <p className="product-category">{product.category_name || 'Sin categoría'}</p>
+        <p className="product-category">{product.category || 'Sin categoría'}</p>
         <p className="product-description">{product.description}</p>
         
         <div className="product-details">

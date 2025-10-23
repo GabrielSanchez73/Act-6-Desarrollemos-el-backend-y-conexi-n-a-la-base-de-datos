@@ -134,9 +134,11 @@ function App() {
     try {
       const response = await fetch(getApiUrl('CATEGORIAS'));
       const data = await response.json();
-      setCategorias(data);
+      console.log('Categorías cargadas:', data);
+      setCategorias(Array.isArray(data) ? data : []);
     } catch (error) {
-      // Error silencioso para categorías
+      console.error('Error al cargar categorías:', error);
+      setCategorias([]);
     }
   };
 
@@ -564,8 +566,8 @@ function App() {
                   }}
                 >
                   <MenuItem value="">Todas las categorías</MenuItem>
-                  {categorias.map((cat) => (
-                    <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                  {Array.isArray(categorias) && categorias.map((cat) => (
+                    <MenuItem key={cat.id || cat} value={cat.nombre || cat}>{cat.nombre || cat}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -1012,11 +1014,11 @@ function App() {
                       <MenuItem value="">
                         <em>Seleccionar categoría</em>
                       </MenuItem>
-                      {categorias.map((cat, index) => (
-                        <MenuItem key={index} value={cat}>
-                          {cat}
-                        </MenuItem>
-                      ))}
+                  {Array.isArray(categorias) && categorias.map((cat, index) => (
+                    <MenuItem key={cat.id || index} value={cat.nombre || cat}>
+                      {cat.nombre || cat}
+                    </MenuItem>
+                  ))}
                       <MenuItem value="__nueva__">
                         <em>Agregar nueva categoría</em>
                       </MenuItem>
