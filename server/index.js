@@ -4,7 +4,8 @@ const db = require('./db')
 const app = express();
 
 app.use(cors())//solicitudes desde otro origenes
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Ruta de prueba para verificar que el servidor funciona
 app.get('/', (req, res) => {

@@ -573,7 +573,7 @@ function App() {
                 >
                   <MenuItem value="">Todas las categorías</MenuItem>
                   {Array.isArray(categorias) && categorias.map((cat) => (
-                    <MenuItem key={cat.id || cat} value={cat.nombre || cat}>{cat.nombre || cat}</MenuItem>
+                    <MenuItem key={cat.id || cat} value={cat.name || cat.nombre || cat}>{cat.name || cat.nombre || cat}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -1021,8 +1021,8 @@ function App() {
                         <em>Seleccionar categoría</em>
                       </MenuItem>
                   {Array.isArray(categorias) && categorias.map((cat, index) => (
-                    <MenuItem key={cat.id || index} value={cat.nombre || cat}>
-                      {cat.nombre || cat}
+                    <MenuItem key={cat.id || index} value={cat.name || cat.nombre || cat}>
+                      {cat.name || cat.nombre || cat}
                     </MenuItem>
                   ))}
                       <MenuItem value="__nueva__">
