@@ -217,26 +217,6 @@ VITE_API_BASE_URL=http://localhost:5000
 **Gabriel Sánchez**
 - GitHub: [@GabrielSanchez73](https://github.com/GabrielSanchez73)
 
-## Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## Soporte
-
-Si tienes preguntas o necesitas ayuda, puedes:
-- Abrir un issue en GitHub
-- Contactar al autor
-
----
 
 **TechSalle** - Sistema de Gestión de Productos Tecnológicos
